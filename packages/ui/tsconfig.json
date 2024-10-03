@@ -6,6 +6,6 @@
       "@repo/ui/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/components/ui/calender.tsx"],
   "exclude": ["node_modules"]
 }
