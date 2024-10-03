@@ -6,38 +6,80 @@ import {
   NavigationMenuItem,
   NavigationMenuTrigger,
 } from "@repo/ui/components/ui/navigation-menu";
+import Calendar from "@repo/ui/components/ui/calender";
+import { Accordion, AccordionItem } from "@repo/ui/components/ui/accordion";
 
-import Calendar from "@repo/ui/components/ui/calender"; // Import Calendar component
-import { Accordion, AccordionItem } from "@repo/ui/components/ui/accordion"; // Import Accordion components
+// Define the interface for your data items
+interface DataItem {
+  id: number;       // Adjust the type according to your database
+  title: string;
+  date: string;     // If date is stored as a string; adjust if necessary
+}
 
 const options: string[] = ["Mr", "Mrs", "Miss"];
 
 function NavigationMenuDemo() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(""); // Initially empty string
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Initially null for no selected date
+  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [data, setData] = useState<DataItem[]>([]); // Use DataItem interface
 
-  // Handle date selection
   const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date); // Update selected date
+    setSelectedDate(date);
+  };
+
+  const handleSave = async () => {
+    const dateString = selectedDate ? selectedDate.toISOString().split("T")[0] : null;
+
+    const data = { title: selectedOption, date: dateString };
+
+    try {
+      const response = await fetch("http://localhost:5000/api/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Data saved:", result);
+      } else {
+        console.error("Error saving data");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleFetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/data");
+      if (response.ok) {
+        const result: DataItem[] = await response.json(); // Specify the type here
+        setData(result);
+      } else {
+        console.error("Error fetching data");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
     <div>
       <NavigationMenu>
-        {/* Calendar Menu Item (Accordion) */}
         <Accordion type="single">
           <AccordionItem title="Calendar" value="calendar">
-            <Calendar onChange={handleDateChange} /> 
-            {/* Pass handleDateChange function */}
+            <Calendar onChange={handleDateChange} />
           </AccordionItem>
         </Accordion>
 
-        {/* Title Dropdown (Mr/Mrs/Miss) */}
         <NavigationMenuItem
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className="relative" // Ensure parent container is relative for positioning
+          className="relative"
         >
           <NavigationMenuTrigger>Title</NavigationMenuTrigger>
           <NavigationMenuContent
@@ -47,15 +89,15 @@ function NavigationMenuDemo() {
             style={{
               width: "150px",
               overflow: "hidden",
-              right: "20px", // Move dropdown to the right
-              position: "absolute", 
+              right: "20px",
+              position: "absolute",
             }}
           >
             <ul className="text-center">
               {options.map((option) => (
                 <li
                   key={option}
-                  onClick={() => setSelectedOption(option)} // Set selected option
+                  onClick={() => setSelectedOption(option)}
                   style={{ cursor: "pointer", padding: "0.5rem 0" }}
                 >
                   {option}
@@ -75,7 +117,6 @@ function NavigationMenuDemo() {
           backgroundColor: "red",
         }}
       >
-        {/* Input box for displaying selected date */}
         <input
           type="text"
           value={selectedDate ? selectedDate.toLocaleDateString() : ""}
@@ -83,14 +124,64 @@ function NavigationMenuDemo() {
           placeholder="Selected Date"
           style={{ marginBottom: "1rem" }}
         />
-
-        {/* Input box for displaying selected title option */}
         <input
           type="text"
-          value={selectedOption} // Display the selected title option here
+          value={selectedOption}
           disabled
-          placeholder="Selected Title" // Optional placeholder
+          placeholder="Selected Title"
         />
+
+        {/* Save Button */}
+        <button
+          onClick={handleSave}
+          style={{
+            marginTop: "1rem",
+            padding: "0.5rem 1rem",
+            backgroundColor: "blue",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Save
+        </button>
+
+        {/* Update Button to Fetch Data */}
+        <button
+          onClick={handleFetchData}
+          style={{
+            marginTop: "1rem",
+            padding: "0.5rem 1rem",
+            backgroundColor: "green",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Update
+        </button>
+
+        {/* Table to display fetched data */}
+        <table style={{ marginTop: "1rem", width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              <th style={{ border: "1px solid #ccc", padding: "8px" }}>ID</th>
+              <th style={{ border: "1px solid #ccc", padding: "8px" }}>Title</th>
+              <th style={{ border: "1px solid #ccc", padding: "8px" }}>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item.id}>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>{item.id}</td>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>{item.title}</td>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>{item.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
