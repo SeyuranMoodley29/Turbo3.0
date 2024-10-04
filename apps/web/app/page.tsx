@@ -1,10 +1,14 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link"; // Import Link for Next.js
 import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuTrigger,
+  NavigationMenuList,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle
 } from "@repo/ui/components/ui/navigation-menu";
 import Calendar from "@repo/ui/components/ui/calender";
 import { Accordion, AccordionItem } from "@repo/ui/components/ui/accordion";
@@ -70,12 +74,14 @@ function NavigationMenuDemo() {
   return (
     <div>
       <NavigationMenu>
+        <NavigationMenuList>
         <Accordion type="single">
           <AccordionItem title="Calendar" value="calendar">
             <Calendar onChange={handleDateChange} />
           </AccordionItem>
         </Accordion>
 
+        {/* Title Dropdown */}
         <NavigationMenuItem
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
@@ -106,6 +112,14 @@ function NavigationMenuDemo() {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
+
+        {/* New Navigation Menu Item for the second_page.tsx */}
+        <NavigationMenuItem>
+          <Link href="/SecondPage" passHref>
+            <NavigationMenuLink>Go to Second Page</NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        </NavigationMenuList>
       </NavigationMenu>
 
       <div
@@ -183,6 +197,8 @@ function NavigationMenuDemo() {
           </tbody>
         </table>
       </div>
+
+      
     </div>
   );
 }
