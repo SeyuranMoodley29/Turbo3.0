@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 
 // PostgreSQL connection
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "postgres",
-  password: "Seyuranm8",
+  user: "default",
+  host: "ep-hidden-morning-a467vhvw-pooler.us-east-1.aws.neon.tech",
+  database: "verceldb",
+  password: "KVBkHo9A1Yjy",
   port: 5432,
 });
 

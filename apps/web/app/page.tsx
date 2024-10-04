@@ -1,23 +1,22 @@
 "use client";
 import React, { useState } from "react";
-import Link from "next/link"; // Import Link for Next.js
+import Link from "next/link";
 import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuTrigger,
   NavigationMenuList,
-  NavigationMenuLink,
-  navigationMenuTriggerStyle
+  NavigationMenuLink
 } from "@repo/ui/components/ui/navigation-menu";
 import Calendar from "@repo/ui/components/ui/calender";
 import { Accordion, AccordionItem } from "@repo/ui/components/ui/accordion";
 
 // Define the interface for your data items
 interface DataItem {
-  id: number;       // Adjust the type according to your database
+  id: number;
   title: string;
-  date: string;     // If date is stored as a string; adjust if necessary
+  date: string;
 }
 
 const options: string[] = ["Mr", "Mrs", "Miss"];
@@ -26,7 +25,7 @@ function NavigationMenuDemo() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [data, setData] = useState<DataItem[]>([]); // Use DataItem interface
+  const [data, setData] = useState<DataItem[]>([]);
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -38,7 +37,7 @@ function NavigationMenuDemo() {
     const data = { title: selectedOption, date: dateString };
 
     try {
-      const response = await fetch("http://localhost:5000/api/save", {
+      const response = await fetch("/api/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,9 +58,9 @@ function NavigationMenuDemo() {
 
   const handleFetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/data");
+      const response = await fetch("/api/data");
       if (response.ok) {
-        const result: DataItem[] = await response.json(); // Specify the type here
+        const result: DataItem[] = await response.json();
         setData(result);
       } else {
         console.error("Error fetching data");
@@ -75,50 +74,50 @@ function NavigationMenuDemo() {
     <div>
       <NavigationMenu>
         <NavigationMenuList>
-        <Accordion type="single">
-          <AccordionItem title="Calendar" value="calendar">
-            <Calendar onChange={handleDateChange} />
-          </AccordionItem>
-        </Accordion>
+          <Accordion type="single">
+            <AccordionItem title="Calendar" value="calendar">
+              <Calendar onChange={handleDateChange} />
+            </AccordionItem>
+          </Accordion>
 
-        {/* Title Dropdown */}
-        <NavigationMenuItem
-          onMouseEnter={() => setIsOpen(true)}
-          onMouseLeave={() => setIsOpen(false)}
-          className="relative"
-        >
-          <NavigationMenuTrigger>Title</NavigationMenuTrigger>
-          <NavigationMenuContent
-            className={`absolute top-full bg-white shadow-lg transition-all duration-300 ${
-              isOpen ? "max-h-[200px] p-4" : "max-h-0"
-            }`}
-            style={{
-              width: "150px",
-              overflow: "hidden",
-              right: "20px",
-              position: "absolute",
-            }}
+          {/* Title Dropdown */}
+          <NavigationMenuItem
+            onMouseEnter={() => setIsOpen(true)}
+            onMouseLeave={() => setIsOpen(false)}
+            className="relative"
           >
-            <ul className="text-center">
-              {options.map((option) => (
-                <li
-                  key={option}
-                  onClick={() => setSelectedOption(option)}
-                  style={{ cursor: "pointer", padding: "0.5rem 0" }}
-                >
-                  {option}
-                </li>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
+            <NavigationMenuTrigger>Title</NavigationMenuTrigger>
+            <NavigationMenuContent
+              className={`absolute top-full bg-white shadow-lg transition-all duration-300 ${
+                isOpen ? "max-h-[200px] p-4" : "max-h-0"
+              }`}
+              style={{
+                width: "150px",
+                overflow: "hidden",
+                right: "20px",
+                position: "absolute",
+              }}
+            >
+              <ul className="text-center">
+                {options.map((option) => (
+                  <li
+                    key={option}
+                    onClick={() => setSelectedOption(option)}
+                    style={{ cursor: "pointer", padding: "0.5rem 0" }}
+                  >
+                    {option}
+                  </li>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
 
-        {/* New Navigation Menu Item for the second_page.tsx */}
-        <NavigationMenuItem>
-          <Link href="/SecondPage" passHref>
-            <NavigationMenuLink>Go to Second Page</NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+          {/* New Navigation Menu Item for the second_page.tsx */}
+          <NavigationMenuItem>
+            <Link href="/SecondPage" passHref>
+              <NavigationMenuLink>Go to Second Page</NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
 
@@ -197,8 +196,6 @@ function NavigationMenuDemo() {
           </tbody>
         </table>
       </div>
-
-      
     </div>
   );
 }
