@@ -47,7 +47,7 @@ function NavigationMenuDemo() {
 
       if (response.ok) {
         const result = await response.json();
-        console.log("Data saved:", result);
+        window.alert(response.ok);
       } else {
         console.error("Error saving data");
       }
@@ -62,6 +62,7 @@ function NavigationMenuDemo() {
       if (response.ok) {
         const result: DataItem[] = await response.json();
         setData(result);
+        window.alert(response.ok)
       } else {
         console.error("Error fetching data");
       }
